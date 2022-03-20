@@ -154,112 +154,123 @@ addEmployee = () => {
     inquirer.prompt([
         {
             type: 'input',
-            name: 'firstName',
-            message: "What is the employee's first name?",
-            validate: firstName => {
-                if (firstName) {
+            name: 'first_name',
+            message: "What is the first name of the employee?",
+            validate: first_name => {
+                if (first_name) {
                     return true;
                 } else {
-                    console.log('Please enter the first name');
+                    console.log('Please enter the first name of the employee');
                     return false;
                 }
             }
         },
         {
             type: 'input',
-            name: 'lastName',
-            message: "What is the employee's last name?",
-            validate: lastName => {
-                if (lastName) {
+            name: 'last_name',
+            message: "What is the last name of the employee?",
+            validate: last_name => {
+                if (last_name) {
                     return true;
                 } else {
-                    console.log('Please enter the last name');
+                    console.log('Please the last name for the employee');
                     return false;
                 }
             }
-        },
-        {
-            type: 'input',
-            name: 'role',
-            message: "What is the employee's role?",
-            validate: role => {
-                if (role) {
-                    return true;
-                } else {
-                    console.log('Please enter the employee role');
-                    return false;
-                }
-            }
-        },
-
+        }
     ])
-        .then(answer => {
-            const fullName = [answer.firstName, answer.lastName];
-            // Determine what department
-            const listDepartmentsSQL = `select name from department`;
-            db.query(listDepartmentsSQL, (err, results) => {
+        .then(names => {
+            const newEmployeeData = [names.first_name, names.last_name];
 
-            }
+            const getRoleSQL = `select title name, id value from role`;
+            db.query(getRoleSQL, (err, results) => {
+                if (err) throw error;
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'roleName',
+                        message: "What is the employee's role?",
+                        choices: results
+                    },
+                ])
+                    .then(employeeRole => {
+                        const roleID = employeeRole.roleName;
+                        newEmployeeData.push(roleID);
+                        console.log(newEmployeeData);
+                    })
 
-            )
 
-            const sql = `INSERT INTO emmployee (first_name, last_name, role, manager) VALUES (?)`;
-            db.query(sql, answer.addEmployee, (err, result) => {
-                if (err) throw err;
-                console.log("Added " + answer.addEmployee + " to the database");
+                const getManager = `select concat(employee.first_name, employee.last_name) name, role.title value
+                        from employee JOIN role where role.id = employee.role_id and role.title = "Manager" `;
+                db.query(getManager, (err, results) => {
 
-                listEmployees();
-            });
-        });
-};
-
-updateEmployee = () => {
-    const emmployeeList = `select concat(first_name, ' ', last_name) name, id value from employee`;
-    db.query(emmployeeList, (err, results) => {
-
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'employeeID',
-                message: "Which employee's role do you want to update?",
-                choices: results
-            }
-        ])
-            .then(employeeAnswer => {
-                const selectRoleSQL = `select title name, id value from role`;
-                db.query(selectRoleSQL, (err, results) => {
                     inquirer.prompt([
                         {
                             type: 'list',
-                            name: 'roleID',
-                            message: 'What is the employees new role?',
+                            name: 'managerName',
+                            message: "Who is the employee's manager?",
                             choices: results
-                        }
+                        },
                     ])
-                        .then(roleAnswer => {
-                            roleAndID = [roleAnswer.roleID, employeeAnswer.employeeID];
-                            const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
-                            db.query(sql, roleAndID, (err, result) => {
-                                if (err) throw err;
-                                console.log("Employee has been updated!");
-                                showOptions();
-                            })
+                        .then(mangerAnswer => {
+                            const managerID = mangerAnswer.managerName;
+                            newEmployeeData.push(managerID);
+                            console.log(newEmployeeData);
+                        })
 
-                        });
-                });
+                })
             });
-    });
-}
+        });
+    };
+
+
+
+    updateEmployee = () => {
+        const emmployeeList = `select concat(first_name, ' ', last_name) name, id value from employee`;
+        db.query(emmployeeList, (err, results) => {
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employeeID',
+                    message: "Which employee's role do you want to update?",
+                    choices: results
+                }
+            ])
+                .then(employeeAnswer => {
+                    const selectRoleSQL = `select title name, id value from role`;
+                    db.query(selectRoleSQL, (err, results) => {
+                        inquirer.prompt([
+                            {
+                                type: 'list',
+                                name: 'roleID',
+                                message: 'What is the employees new role?',
+                                choices: results
+                            }
+                        ])
+                            .then(roleAnswer => {
+                                roleAndID = [roleAnswer.roleID, employeeAnswer.employeeID];
+                                const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+                                db.query(sql, roleAndID, (err, result) => {
+                                    if (err) throw err;
+                                    console.log("Employee has been updated!");
+                                    showOptions();
+                                })
+
+                            });
+                    });
+                });
+        });
+    }
 
     // Join all 3 tables together, including manager to itself to link manager_id and id
     listEmployees = () => {
         const sql = `select employee.id EmployeeID, employee.first_name FirstName, employee.last_name LastName,
-        role.title Role, department.name Dept, role.salary Salary, concat(manager.first_name, ' ', manager.last_name) Manager
-        from employee 
-        LEFT OUTER JOIN employee manager on employee.manager_id = manager.id
-        INNER JOIN role on employee.role_id = role.id  
-        INNER JOIN department on department.id = role.department_id
-        `;
+            role.title Title, department.name Dept, role.salary Salary, concat(manager.first_name, ' ', manager.last_name) Manager
+            FROM employee 
+            LEFT OUTER JOIN employee manager on employee.manager_id = manager.id
+            INNER JOIN role on employee.role_id = role.id  
+            INNER JOIN department on department.id = role.department_id `;
         db.query(sql, function (err, results) {
             console.table(results);
             console.log("-----------------")
@@ -268,7 +279,7 @@ updateEmployee = () => {
     };
 
     listRoles = () => {
-        const sql = `select role.title Role, role.id ID, department.name Dept, role.salary Salary 
+        const sql = `select role.id ID, role.title Role, department.name Dept, role.salary Salary 
     from role JOIN department where department.id = role.department_id`;
         db.query(sql, function (err, results) {
             console.table(results);
@@ -278,12 +289,12 @@ updateEmployee = () => {
     };
 
     listDepartments = () => {
-        const sql = `select name Dept, id ID from department`;
-        db.query(sql, function (err, results) {
+        const sql = `select id ID, name Dept from department`;
+        db.promise().query(sql, (err, results) => {
             console.table(results);
             console.log("-----------------")
             showOptions();
-        });
+        })
     };
 
     showOptions();
