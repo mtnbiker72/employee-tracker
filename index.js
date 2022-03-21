@@ -29,6 +29,7 @@ const showOptions = () => {
                 "Add A Role",
                 "Add An Employee",
                 "Update Employee Role",
+                "Show Department Budgets",
             ],
         },
     ])
@@ -56,6 +57,9 @@ const showOptions = () => {
                     break;
                 case "Update Employee Role":
                     updateEmployee();
+                    break;
+                case "Show Department Budgets":
+                    showBudgets();
                     break;
                 default:
                     break;
@@ -197,7 +201,6 @@ addEmployee = () => {
                         const roleID = employeeRole.roleName;
                         newEmployeeData.push(roleID);
                         console.log(newEmployeeData);
-                    })
 
 
                 const getManager = `select concat(employee.first_name, employee.last_name) name, role.title value
@@ -215,8 +218,11 @@ addEmployee = () => {
                         .then(mangerAnswer => {
                             const managerID = mangerAnswer.managerName;
                             newEmployeeData.push(managerID);
+                            
                             console.log(newEmployeeData);
+                            showOptions();
                         })
+                    })
 
                 })
             });
@@ -278,23 +284,63 @@ addEmployee = () => {
         });
     };
 
+    // listRoles = () => {
+    //     const sql = `select role.id ID, role.title Role, department.name Dept, role.salary Salary 
+    // from role JOIN department where department.id = role.department_id`;
+    //     db.promise().query(sql)
+    //     .then(results => {
+    //         return results})
+    //     }
+
+    //     function (err, results) {
+    //         console.table(results);
+    //         console.log("-----------------")
+    //         showOptions();
+    //     });
+    // };
+
+    // listRoles = () =>{
+    //     return new Promise((resolve, reject) => {
+
+    //         db.query('query1',  (error, results)=>{
+    //             if(error){
+    //                 return reject(error);
+    //             }
+    //             return resolve(results);
+    //         });
+    //     });
+    // };
+
     listRoles = () => {
-        const sql = `select role.id ID, role.title Role, department.name Dept, role.salary Salary 
-    from role JOIN department where department.id = role.department_id`;
-        db.query(sql, function (err, results) {
-            console.table(results);
-            console.log("-----------------")
-            showOptions();
-        });
-    };
+            return new Promise((resolve, reject)=>{
+                db.query(`SELECT * FROM role`, (error, results) => {
+                    if(error) {
+                        return reject(error);
+                    }
+                    console.table(results);
+                    return resolve(results);
+                });
+            });
+        };
 
     listDepartments = () => {
         const sql = `select id ID, name Dept from department`;
-        db.promise().query(sql, (err, results) => {
+        db.query(sql, (err, results) => {
             console.table(results);
             console.log("-----------------")
             showOptions();
         })
     };
+
+    showBudgets = () => {
+        const budgetSQL = `SELECT department.name Dept, sum(role.salary) TotalSalary
+            FROM role JOIN department on department.id = role.department_id 
+            GROUP BY department.name `;
+            db.query(budgetSQL, (err, results) => {
+                console.table(results);
+                console.log("-----------------")
+                showOptions();
+            })
+        };
 
     showOptions();
