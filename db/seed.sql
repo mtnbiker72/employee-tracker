@@ -14,10 +14,10 @@ VALUES ("Senior IT", 100000, 2),
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Heather", "Graham", 1, 7),
        ("Joy", "Bob", 4, 8),
-       ("Larry", "Algerbra", 3, 8),
-       ("Jermey", "Internet", 1, 8),
-       ("Michelle", "Design", 5, 7),
+       ("Larry", "Wilmore", 3, 8),
+       ("Jermey", "Irons", 1, 8),
+       ("Michelle", "Newton", 5, 7),
        ("Fred", "Smith", 3, 7),
        ("Boss", "Man", 2, NULL),
-       ("Boss", "WoMan", 2, NULL);
+       ("Boss", "Woman", 2, NULL);
        

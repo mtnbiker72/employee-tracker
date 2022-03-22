@@ -34,6 +34,7 @@ const showOptions = () => {
         {
             name: "question",
             type: "list",
+            pageSize: 10,
             message: 'What would you like to do?',
             choices: [
                 "View All Departments",
@@ -44,6 +45,8 @@ const showOptions = () => {
                 "Add An Employee",
                 "Update Employee Role",
                 "Show Department Budgets",
+                "Show Employees by Manager",
+                "Show Employees by Department",
             ],
         },
     ])
@@ -74,6 +77,12 @@ const showOptions = () => {
                     break;
                 case "Show Department Budgets":
                     showBudgets();
+                    break;
+                case "Show Employees by Manager":
+                    showEmployeeManagers();
+                    break;
+                case "Show Employees by Department":
+                    showEmployeeDepartment();
                     break;
                 default:
                     break;
@@ -151,10 +160,9 @@ addRole = () => {
                     ])
 
                         .then(answer => {
-                            console.log(answer.deptName);
                             db.addRole(salaryRoleAnswer.roleName, salaryRoleAnswer.roleSalary, answer.deptName)
                                 .then(results => {
-                                    console.log("You added a role!");
+                                    console.log("Added " + salaryRoleAnswer.roleName + " making " + salaryRoleAnswer.roleSalary + " salary to the database");
                                     showOptions();
 
                                 })
@@ -218,6 +226,7 @@ addEmployee = () => {
 
                                         .then(mangerAnswer => {
                                             db.addEmployee(names.first_name, names.last_name, employeeRole.roleName, mangerAnswer.managerName)
+                                            console.log("Added " + names.first_name, names.last_name + " to the database");
                                             showOptions();
                                         })
                                 })
@@ -253,7 +262,7 @@ updateEmployee = () => {
                                 .then(roleAnswer => {
                                     db.updateEmployeeRole(roleAnswer.roleID, employeeAnswer.employeeID)
                                         .then(results => {
-                                            console.log("Employee has been updated!");
+                                            console.log(employeeID + " has been updated!");
                                             showOptions();
                                         })
 
@@ -296,6 +305,27 @@ showDepartments = () => {
 // Code to show the budgets for each department
 showBudgets = () => {
     db.getBudgets()
+        .then(results => {
+            console.table(results);
+            console.log("-----------------")
+            showOptions();
+        })
+};
+
+
+// Code to show the managers for every employee
+showEmployeeManagers = () => {
+    db.showEmployeeManagers()
+        .then(results => {
+            console.table(results);
+            console.log("-----------------")
+            showOptions();
+        })
+};
+
+// Code to show the managers for every employee
+showEmployeeDepartment = () => {
+    db.showEmployeeDepartment()
         .then(results => {
             console.table(results);
             console.log("-----------------")

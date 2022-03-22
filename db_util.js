@@ -36,6 +36,7 @@ class db_util {
             });
         });
     }
+
     getRoles() {
         const selectRoleSQL = `select title name, id value from role`;
         return new Promise((resolve, reject) => {
@@ -103,6 +104,7 @@ class db_util {
             });
         }); 
     }
+
     updateEmployeeRole(roleID, employeeID) {
         const roleAndID = [roleID, employeeID];
         const updateEmployeeRoleSQL = `UPDATE employee SET role_id = ? WHERE id = ?`;
@@ -177,6 +179,43 @@ class db_util {
             });
         });
     }
+
+    showEmployeeManagers() {
+        const showEmployeeManagersSQL = `SELECT concat(manager.first_name, ' ', manager.last_name) Manager, 
+        employee.first_name FirstName, employee.last_name LastName, role.title Title
+        FROM employee 
+        LEFT OUTER JOIN employee manager on employee.manager_id = manager.id
+        INNER JOIN role on employee.role_id = role.id  
+        INNER JOIN department on department.id = role.department_id
+        WHERE employee.manager_id != "NULL"
+        ORDER BY manager.last_name, manager.first_name;`
+        return new Promise((resolve, reject) => {
+            this.db.query(showEmployeeManagersSQL, (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                return resolve(results);
+            });
+        }); 
+    }
+
+    showEmployeeDepartment() {
+        const getEmployeeDepartmentSQL = `select department.name Department, concat(employee.first_name, ' ', employee.last_name) Name
+        from employee
+        JOIN role on employee.role_id = role.id
+        JOIN department on department.id = role.department_id
+        group by department.name, employee.last_name, employee.first_name
+        order by department.name`;
+        return new Promise((resolve, reject) => {
+            this.db.query(getEmployeeDepartmentSQL, (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                return resolve(results);
+            });
+        });
+    }
+
 }
 
 module.exports = db_util;
