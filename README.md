@@ -5,7 +5,7 @@ https://github.com/mtnbiker72/employee-tracker
 
 The video that explains how to use the application -
 
-<TBD>
+https://drive.google.com/file/d/1zTe38OzkzT1CfKPCxFbd9JrbBsjTulOq/view
 
 ## Required Modules:
 * mysql2
