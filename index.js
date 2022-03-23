@@ -3,6 +3,7 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
+
 // Require the db_util that has all sql and functions
 const db_util = require('./db_util');
 
@@ -223,7 +224,6 @@ addEmployee = () => {
                                             choices: results
                                         },
                                     ])
-
                                         .then(mangerAnswer => {
                                             db.addEmployee(names.first_name, names.last_name, employeeRole.roleName, mangerAnswer.managerName)
                                             console.log("Added " + names.first_name, names.last_name + " to the database");
@@ -262,7 +262,7 @@ updateEmployee = () => {
                                 .then(roleAnswer => {
                                     db.updateEmployeeRole(roleAnswer.roleID, employeeAnswer.employeeID)
                                         .then(results => {
-                                            console.log(employeeID + " has been updated!");
+                                            console.log(employeeAnswer.employeeID + " has been updated!");
                                             showOptions();
                                         })
 

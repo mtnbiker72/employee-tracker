@@ -1,8 +1,27 @@
 {
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "Employee database",
+  "main": "index.js",
   "dependencies": {
+    "dotenv": "^16.0.0",
     "console.table": "^0.10.0",
-    "express": "^4.17.3",
     "inquirer": "^8.2.1",
     "mysql2": "^2.3.3"
-  }
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtnbiker72/employee-tracker.git"
+  },
+  "author": "Heather Graham",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mtnbiker72/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/mtnbiker72/employee-tracker#readme"
 }

@@ -1,4 +1,6 @@
 const mysql = require('mysql2');
+// Enable access to .env variables
+require('dotenv').config();
 
 // Class to login to the database and all SQL statements
 class db_util {
@@ -6,9 +8,9 @@ class db_util {
         this.db = mysql.createConnection(
             {
                 host: 'localhost',
-                user: 'root',
-                password: 'password',
-                database: 'employee_db'
+                user: process.env.DB_USER,
+                password: process.env.DB_PASSWORD,
+                database: process.env.DB_NAME
             }
         )
     }
@@ -155,9 +157,11 @@ class db_util {
     }
 
     getBudgets() {
-        const getBudgetSQL = `SELECT department.name Dept, sum(role.salary) TotalSalary
-        FROM role JOIN department on department.id = role.department_id 
-        GROUP BY department.name `;
+        const getBudgetSQL = `SELECT department.name, sum(salary) TotalSalary 
+        FROM employee 
+        LEFT JOIN role ON employee.role_id = role.id
+        LEFT JOIN DEPARTMENT ON role.department_id = department.id
+        GROUP BY role.department_id`;
         return new Promise((resolve, reject) => {
             this.db.query(getBudgetSQL, (error, results) => {
                 if (error) {
