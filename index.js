@@ -3,7 +3,6 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
-
 // Require the db_util that has all sql and functions
 const db_util = require('./db_util');
 
@@ -35,7 +34,7 @@ const showOptions = () => {
         {
             name: "question",
             type: "list",
-            pageSize: 10,
+            pageSize: 11,
             message: 'What would you like to do?',
             choices: [
                 "View All Departments",
@@ -48,6 +47,7 @@ const showOptions = () => {
                 "Show Department Budgets",
                 "Show Employees by Manager",
                 "Show Employees by Department",
+                "Quit",
             ],
         },
     ])
@@ -84,6 +84,9 @@ const showOptions = () => {
                     break;
                 case "Show Employees by Department":
                     showEmployeeDepartment();
+                    break;
+                case "Quit":
+                    quit();
                     break;
                 default:
                     break;
@@ -297,7 +300,7 @@ showDepartments = () => {
     db.getDepartments()
         .then(results => {
             console.table(results);
-            console.log("-----------------")
+            console.log("-----------------");
             showOptions();
         })
 };
@@ -332,6 +335,11 @@ showEmployeeDepartment = () => {
             showOptions();
         })
 };
+
+quit = () => {
+    console.log("Thanks for using Employee Tracker!");
+    process.exit();
+}
 
 // Call this to start adding/showing new employees to the database
 showBanner();

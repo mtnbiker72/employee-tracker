@@ -4,12 +4,11 @@
   "description": "Employee database",
   "main": "index.js",
   "dependencies": {
-    "dotenv": "^16.0.0",
     "console.table": "^0.10.0",
+    "dotenv": "^16.0.0",
     "inquirer": "^8.2.1",
     "mysql2": "^2.3.3"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
