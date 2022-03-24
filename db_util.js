@@ -16,7 +16,7 @@ class db_util {
     }
 
     getDepartments() {
-        const getDepartmentSQL = `select id ID, name Dept from department`;
+        const getDepartmentSQL = `SELECT id ID, name Dept FROM department`;
         return new Promise((resolve, reject) => {
             this.db.query(getDepartmentSQL, (error, results) => {
                 if (error) {
@@ -28,7 +28,7 @@ class db_util {
     }
 
     getDepartmentForNewRole() {
-        const getDepartmentForNewRoleSQL = `select name, id value from department`;
+        const getDepartmentForNewRoleSQL = `SELECT name, id value FROM department`;
         return new Promise((resolve, reject) => {
             this.db.query(getDepartmentForNewRoleSQL, (error, results) => {
                 if (error) {
@@ -40,7 +40,7 @@ class db_util {
     }
 
     getRoles() {
-        const selectRoleSQL = `select title name, id value from role`;
+        const selectRoleSQL = `SELECT title name, id value FROM role`;
         return new Promise((resolve, reject) => {
             this.db.query(selectRoleSQL, (error, results) => {
                 if (error) {
@@ -52,8 +52,8 @@ class db_util {
     }
 
     getRoleInfo() {
-        const getRoleInfoSQL = `select role.id ID, role.title Title, department.name Dept, role.salary Salary from role 
-            JOIN department where department.id = role.department_id`;
+        const getRoleInfoSQL = `SELECT role.id ID, role.title Title, department.name Dept, role.salary Salary FROM role 
+            JOIN department WHERE department.id = role.department_id`;
         return new Promise((resolve, reject) => {
             this.db.query(getRoleInfoSQL, (error, results) => {
                 if (error) {
@@ -65,12 +65,12 @@ class db_util {
     }
 
     getEmployees() {
-        const showEmployeesSQL = `select employee.id EmployeeID, employee.first_name FirstName, employee.last_name LastName,
+        const showEmployeesSQL = `SELECT employee.id EmployeeID, employee.first_name FirstName, employee.last_name LastName,
         role.title Title, department.name Dept, role.salary Salary, concat(manager.first_name, ' ', manager.last_name) Manager
         FROM employee 
-        LEFT OUTER JOIN employee manager on employee.manager_id = manager.id
-        INNER JOIN role on employee.role_id = role.id  
-        INNER JOIN department on department.id = role.department_id `;
+        LEFT OUTER JOIN employee manager ON employee.manager_id = manager.id
+        INNER JOIN role ON employee.role_id = role.id  
+        INNER JOIN department ON department.id = role.department_id `;
         return new Promise((resolve, reject) => {
             this.db.query(showEmployeesSQL, (error, results) => {
                 if (error) {
@@ -82,8 +82,8 @@ class db_util {
     }
 
     getManager() {
-        const getManagerSQL = `select concat(employee.first_name, employee.last_name) name, role.title value
-        from employee JOIN role where role.id = employee.role_id and role.title = "Manager" `; 
+        const getManagerSQL = `SELECT concat(employee.first_name, employee.last_name) name, role.title value
+        FROM employee JOIN role WHERE role.id = employee.role_id and role.title = "Manager" `; 
         return new Promise((resolve, reject) => {
             this.db.query(getManagerSQL, (error, results) => {
                 if (error) {
@@ -95,8 +95,8 @@ class db_util {
     }
 
     getManagerName() {
-        const getManagerNameSQL = `select concat(employee.first_name, employee.last_name) name, employee.id value
-        from employee JOIN role where role.id = employee.role_id and role.title = "Manager" `; 
+        const getManagerNameSQL = `SELECT concat(employee.first_name, employee.last_name) name, employee.id value
+        FROM employee JOIN role WHERE role.id = employee.role_id and role.title = "Manager" `; 
         return new Promise((resolve, reject) => {
             this.db.query(getManagerNameSQL, (error, results) => {
                 if (error) {
@@ -105,7 +105,7 @@ class db_util {
                 return resolve(results);
             });
         }); 
-    }
+    };
 
     updateEmployeeRole(roleID, employeeID) {
         const roleAndID = [roleID, employeeID];
@@ -130,7 +130,7 @@ class db_util {
                 return resolve(results);
             });
         });
-    }
+    };
 
     addRole(roleName, roleSalary, deptID) {
         const addRoleNameSQL = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
@@ -142,7 +142,7 @@ class db_util {
                 return resolve(results);
             });
         });
-    }
+    };
 
     addEmployee(first_name, last_name, role_id, manager_id) {
         const addNewEmployeeSQL = `INSERT INTO employee (first_name, last_name, role_id, manager_id ) VALUES (?, ?, ?, ?)`;
@@ -154,7 +154,7 @@ class db_util {
                 return resolve(results);
             });
         });
-    }
+    };
 
     getBudgets() {
         const getBudgetSQL = `SELECT department.name, sum(salary) TotalSalary 
@@ -170,10 +170,10 @@ class db_util {
                 return resolve(results);
             });
         });
-    }
+    };
 
     getEmployeeList() {
-        const getEmmployeeListSQL = `select concat(first_name, ' ', last_name) name, id value from employee`;
+        const getEmmployeeListSQL = `SELECT concat(first_name, ' ', last_name) name, id value FROM employee`;
         return new Promise((resolve, reject) => {
             this.db.query(getEmmployeeListSQL, (error, results) => {
                 if (error) {
@@ -182,15 +182,15 @@ class db_util {
                 return resolve(results);
             });
         });
-    }
+    };
 
     showEmployeeManagers() {
         const showEmployeeManagersSQL = `SELECT concat(manager.first_name, ' ', manager.last_name) Manager, 
         employee.first_name FirstName, employee.last_name LastName, role.title Title
         FROM employee 
-        LEFT OUTER JOIN employee manager on employee.manager_id = manager.id
-        INNER JOIN role on employee.role_id = role.id  
-        INNER JOIN department on department.id = role.department_id
+        LEFT OUTER JOIN employee manager ON employee.manager_id = manager.id
+        INNER JOIN role ON employee.role_id = role.id  
+        INNER JOIN department ON department.id = role.department_id
         WHERE employee.manager_id != "NULL"
         ORDER BY manager.last_name, manager.first_name;`
         return new Promise((resolve, reject) => {
@@ -201,15 +201,15 @@ class db_util {
                 return resolve(results);
             });
         }); 
-    }
+    };
 
     showEmployeeDepartment() {
-        const getEmployeeDepartmentSQL = `select department.name Department, concat(employee.first_name, ' ', employee.last_name) Name
-        from employee
-        JOIN role on employee.role_id = role.id
-        JOIN department on department.id = role.department_id
-        group by department.name, employee.last_name, employee.first_name
-        order by department.name`;
+        const getEmployeeDepartmentSQL = `SELECT department.name Department, concat(employee.first_name, ' ', employee.last_name) Name
+        FROM employee
+        JOIN role ON employee.role_id = role.id
+        JOIN department ON department.id = role.department_id
+        GROUP BY department.name, employee.last_name, employee.first_name
+        ORDER BY department.name`;
         return new Promise((resolve, reject) => {
             this.db.query(getEmployeeDepartmentSQL, (error, results) => {
                 if (error) {
@@ -218,7 +218,7 @@ class db_util {
                 return resolve(results);
             });
         });
-    }
+    };
 
 }
 
